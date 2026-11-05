@@ -38,6 +38,12 @@ mat-sidenav mat-nav-list {
   padding: 12px;
 }
 
+// Separates the links to other sites from this site's sections.
+mat-sidenav mat-divider {
+  margin-block: 8px;
+  --mat-divider-color: var(--mat-sys-primary);
+}
+
 .sidenav-toolbar {
   height: 56px;
   background-color: var(--mat-sys-secondary);
@@ -114,9 +120,10 @@ mat-sidenav mat-nav-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  // Bottom padding reserves room for the cards' entrance rise so they aren't clipped.
-  --card-rise: 96px;
-  padding: 24px 8px calc(12px + var(--card-rise));
+  // Bottom padding reserves room for the cards' entrance rise so they aren't clipped. The rise is
+  // kept short because the reserved room stays after the animation and can push the page into scrolling.
+  --card-rise: 16px;
+  padding: 24px 8px calc(8px + var(--card-rise));
   overflow: clip;
 }
 

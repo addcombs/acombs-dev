@@ -24,5 +24,20 @@ CloudFront distributions, since the root domain cannot have a CNAME.
 5. In Route 53: alias A and AAAA records for the host and `api.` host to the CloudFront domains the
    scripts print
 
-After that, `scripts\build-lambda.ps1` then `scripts\deploy-api.ps1`, and `scripts\deploy-ui.ps1`
-deploy changes, and `scripts\test-all.ps1` runs both apps' tests.
+After that, `scripts\test-all.ps1` runs both apps' tests.
+
+## Deploying
+
+Pushing to `main` deploys automatically through GitHub Actions: `.github/workflows/deploy-ui.yml`
+when `acombs-dev-ui` changes and `deploy-api.yml` when `acombs-dev-api` changes. Each runs the tests
+first and deploys only if they pass; either can also be run by hand from the repository's Actions
+tab. The API workflow updates the function's code only, so a change to its settings (environment
+variables, memory, role) still needs `scripts\deploy-api.ps1`, which is also the manual deploy, as
+`scripts\deploy-ui.ps1` is for the UI.
+
+The workflows sign in to AWS with GitHub's OIDC token as the `acombs-dev-github-deploy` IAM role,
+so no AWS keys are stored in GitHub. The role trusts only pushes to `main` of
+`addcombs/acombs-dev` (`.github/aws/trust-policy.json`) and can only upload the UI and API and
+publish new versions of this app (`.github/aws/deploy-policy.json`). `sh .github/aws/create-role.sh`
+(in Git Bash) creates the role, and the account-wide GitHub OIDC provider if it is missing; re-run it
+after editing either policy file.

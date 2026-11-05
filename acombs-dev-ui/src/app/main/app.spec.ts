@@ -29,7 +29,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('mat-sidenav-container')).not.toBeNull();
-    expect(fixture.nativeElement.querySelector('main h1').textContent.trim()).toBe('Welcome to Acombs Dev!');
+    expect(fixture.nativeElement.querySelector('main h1').textContent.trim()).toBe('Welcome!');
     expect(fixture.nativeElement.querySelector('button[aria-label="Profile"]')).toBeNull();
     expect(fixture.nativeElement.textContent).not.toMatch(/sign in|sign out|account/i);
   });
@@ -133,7 +133,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
-    const navItems: HTMLElement[] = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]')).slice(1);
+    const navItems: HTMLElement[] = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link)')).slice(1);
     expect(navItems.map((item) => item.querySelector('[matListItemTitle]')?.textContent?.trim()))    .toEqual(['Front-end', 'Back-end', 'Cloud', 'Tools']);
     navItems[2].click();
     fixture.detectChanges();
@@ -143,6 +143,16 @@ describe('App', () => {
     expect(navItems[2].getAttribute('aria-current')).toBe('page');
     expect(navItems[0].hasAttribute('aria-current')).toBe(false);
     expect(fixture.nativeElement.querySelector('section.card-grid[aria-label="Cloud technologies"]')).not.toBeNull();
+  });
+
+  it('links to the Cards site last in the side menu', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const items: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]'));
+    const cards = items[items.length - 1];
+    expect(cards.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe('Cards');
+    expect(cards.getAttribute('href')).toBe('https://cards.acombs-dev.com/');
+    expect(cards.previousElementSibling?.tagName).toBe('MAT-DIVIDER');
   });
 
   it('toggles the sidenav from the hamburger button', () => {

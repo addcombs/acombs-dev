@@ -1,0 +1,68 @@
+# Tests the UI and deploys it to https://acombs-dev.com on every push to main that changes it,
+# doing what scripts\deploy-ui.ps1 does. AWS access comes from the acombs-dev-github-deploy role
+# through GitHub's OIDC token, so no AWS keys are stored in GitHub (see .github/aws).
+name: Deploy UI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - acombs-dev-ui/**
+      - .github/workflows/deploy-ui.yml
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-ui
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-2
+  AWS_ROLE: arn:aws:iam::814787355274:role/acombs-dev-github-deploy
+  BUCKET: acombs-dev-ui-814787355274
+  DISTRIBUTION: E3AT42Y0KTXYMQ
+  NG_CLI_ANALYTICS: 'false'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: acombs-dev-ui
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: acombs-dev-ui/package-lock.json
+
+      - run: npm ci --no-audit --no-fund
+      - run: npm test -- --watch=false
+      - run: npm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Hashed assets can be cached for a year; index.html must always be re-checked.
+      - name: Upload to S3
+        run: |
+          aws s3 sync dist/acombs-dev/browser "s3://$BUCKET" --delete --exclude index.html \
+            --cache-control public,max-age=31536000,immutable --only-show-errors
+          aws s3 cp dist/acombs-dev/browser/index.html "s3://$BUCKET/index.html" \
+            --cache-control no-cache --content-type text/html --only-show-errors
+
+      - name: Refresh CloudFront
+        run: |
+          id=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" \
+            --paths /index.html / --query Invalidation.Id --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION" --id "$id"
+
+      - name: Check the live site
+        run: curl --fail --silent --show-error --output /dev/null https://acombs-dev.com/

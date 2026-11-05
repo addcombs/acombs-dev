@@ -1,8 +1,8 @@
 import { APP_DISPLAY_NAME, formatDisplayName } from './app-name';
 
 describe('formatDisplayName', () => {
-  it('formats the configured application name', () => {
-    expect(APP_DISPLAY_NAME).toBe('Acombs Dev');
+  it('uses the configured display name', () => {
+    expect(APP_DISPLAY_NAME).toBe('Developer Demo - Adam Combs');
   });
 
   it('replaces special characters with spaces and capitalizes each word', () => {

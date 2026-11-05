@@ -2,6 +2,7 @@
 // deploy-ui run before building. Edit project.json, not this file.
 export const PROJECT_SETTINGS = {
   appName: 'acombs-dev',
+  displayName: 'Developer Demo - Adam Combs',
   developerName: 'Adam Combs',
   apiUrl: 'https://api.acombs-dev.com',
 };

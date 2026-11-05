@@ -31,6 +31,11 @@
           <span matListItemTitle>{{ group.label }}</span>
         </a>
       }
+      <mat-divider />
+      <a mat-list-item class="cards-link" [href]="cardsUrl">
+        <mat-icon matListItemIcon>style</mat-icon>
+        <span matListItemTitle>Cards</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -97,7 +102,7 @@
     </mat-toolbar>
 
     <main>
-      <h1 class="welcome-title">Welcome to {{ appName }}!</h1>
+      <h1 class="welcome-title">Welcome!</h1>
       <mat-tab-group class="technology-tabs" mat-stretch-tabs="false" dynamicHeight aria-label="Technologies"
         [selectedIndex]="selectedTechnologyGroup()"
         (selectedIndexChange)="selectedTechnologyGroup.set($event)">

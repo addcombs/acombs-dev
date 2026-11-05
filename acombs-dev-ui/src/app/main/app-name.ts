@@ -18,7 +18,8 @@ export function formatDisplayName(name: string): string {
     .join(' ');
 }
 
-export const APP_DISPLAY_NAME = formatDisplayName(APP_NAME);
+/** The toolbar title: project.json's displayName, or else the formatted app name. */
+export const APP_DISPLAY_NAME = PROJECT_SETTINGS.displayName.trim() || formatDisplayName(APP_NAME);
 
 /** Shown in the footer as "Developed by <name>". */
 export const DEVELOPER_NAME = PROJECT_SETTINGS.developerName;
