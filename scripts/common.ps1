@@ -3,8 +3,7 @@
 # Loads ..\project.json (the only per-app settings) and derives every AWS resource name from the app
 # name, so a new app needs only its own project.json. Folders under the project root:
 #   logs\    run logs and generated request files (git-ignored)
-#   state\   IDs AWS assigned, e.g. cognito-pool.json (git-ignored)
-#   config\  hand-maintained inputs, e.g. managed-login-branding.json
+#   state\   IDs AWS assigned (git-ignored)
 # Native tools write normal output to stderr; Windows PowerShell 5 would treat that as a terminating
 # error under 'Stop', so failures are checked via exit codes.
 param([string]$LogName, [string]$Title, [switch]$AppendLog)
@@ -12,7 +11,6 @@ $ErrorActionPreference = 'Continue'
 $root   = Split-Path -Parent $PSScriptRoot
 $logs   = Join-Path $root 'logs'
 $state  = Join-Path $root 'state'
-$config = Join-Path $root 'config'
 New-Item -ItemType Directory -Force $logs, $state | Out-Null
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
@@ -30,9 +28,6 @@ $apiDomain    = "api.$domain"
 $apiSubdomain = if ($isApexHost) { 'api' } else { "api.$subdomain" }
 # ACM certificates used by CloudFront must be in us-east-1, whatever the app's region.
 $cloudFrontRegion = 'us-east-1'
-# The app's schema in the shared database: project.json database.schema, or else the app name in
-# lower case with other characters as underscores (project-1 -> project_1).
-$dbSchema = if ($project.database.schema) { $project.database.schema } else { ($app -replace '[^A-Za-z0-9]', '_').ToLowerInvariant() }
 # The API's Java package: com.acombsdev.<app name in lower-case letters and digits>, e.g. com.acombsdev.acombsdev.
 $javaPackage = 'com.acombsdev.' + ($app -replace '[^A-Za-z0-9]', '').ToLowerInvariant()
 $apiDir = Join-Path $root "$app-api"
@@ -41,8 +36,6 @@ $names = [ordered]@{
   Function     = "$app-api"
   Role         = "$app-api-lambda"
   DeployKey    = "$app-api-lambda.zip"
-  UserPool     = "$app-users"
-  UserClient   = "$app-ui"
   Oac          = "$app-ui-oac"
   # ACM idempotency tokens allow only letters and digits.
   CertToken    = (($app -replace '[^A-Za-z0-9]', '') + 'cert')
@@ -82,37 +75,20 @@ function Invoke-Npm { if ($npmCli) { & $nodeExe $npmCli @args } else { & npm.cmd
 # The same, as a command line for a new PowerShell window.
 $npmCommand = if ($npmCli) { "& '$nodeExe' '$npmCli'" } else { '& npm.cmd' }
 
-$cognitoStateFile = Join-Path $state 'cognito-pool.json'
-function Get-CognitoIds {
-  if (-not (Test-Path $cognitoStateFile)) { Fail "state\cognito-pool.json not found. Run scripts\create-cognito-pool.ps1 first." }
-  return Get-Content $cognitoStateFile -Raw | ConvertFrom-Json
-}
-
-# Writes the UI's src\app\project.settings.ts from project.json and state\cognito-pool.json. Without
-# the Cognito state the IDs are left empty and the UI reports sign-in as not configured.
+# Writes the UI's src\app\project.settings.ts from project.json.
 function Sync-UiConfig {
-  $ids = if (Test-Path $cognitoStateFile) { Get-Content $cognitoStateFile -Raw | ConvertFrom-Json } else { $null }
   function Ts($s) { "'" + ("$s" -replace '\\', '\\' -replace "'", "\'") + "'" }
-  $urls = "[$(Ts 'http://localhost:4200/'), $(Ts "https://$domain/")]"
   $text = @(
-    "// Generated from project.json and state\cognito-pool.json by Sync-UiConfig in scripts\common.ps1,",
-    '// which start-all and deploy-ui run before building. Edit those files, not this one.',
+    "// Generated from project.json by Sync-UiConfig in scripts\common.ps1, which start-all and",
+    '// deploy-ui run before building. Edit project.json, not this file.',
     'export const PROJECT_SETTINGS = {',
     "  appName: $(Ts $app),",
     "  developerName: $(Ts $project.developerName),",
     "  apiUrl: $(Ts "https://$apiDomain"),",
-    '  auth: {',
-    "    userPoolId: $(Ts $ids.userPoolId),",
-    "    userPoolClientId: $(Ts $ids.userPoolClientId),",
-    "    domain: $(Ts $ids.domain),",
-    "    redirectSignIn: $urls,",
-    "    redirectSignOut: $urls,",
-    '  },',
     '};',
     ''
   ) -join "`n"
   $file = Join-Path $uiDir 'src\app\project.settings.ts'
   $current = if (Test-Path $file) { [System.IO.File]::ReadAllText($file) } else { $null }
   if ($current -ne $text) { Write-Utf8 $file $text; Step 'UI settings written: src\app\project.settings.ts' }
-  if (-not $ids) { Step 'note: state\cognito-pool.json not found; the UI will report sign-in as not configured' }
 }

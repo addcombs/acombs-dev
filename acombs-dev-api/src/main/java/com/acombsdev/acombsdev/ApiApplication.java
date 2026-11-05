@@ -18,7 +18,6 @@ public class ApiApplication {
     OpenAPI openApi(@Value("${spring.application.name}") String applicationName) {
         return new OpenAPI().info(new Info()
                 .title(applicationName.replaceFirst("-api$", "") + " API")
-                .version("1.0")
-                .description("Account endpoints require a Cognito ID token."));
+                .version("1.0"));
     }
 }

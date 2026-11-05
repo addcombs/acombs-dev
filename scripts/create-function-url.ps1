@@ -1,5 +1,5 @@
 # Setup step 3: gives the API's `live` alias a function URL with auth type NONE, for the API's
-# CloudFront distribution to call (step 5, create-api-cloudfront). The API itself requires a verified Cognito token on /api/account. A public URL needs
+# CloudFront distribution to call (step 5, create-api-cloudfront). A public URL needs
 # two permissions on the alias: lambda:InvokeFunctionUrl, and lambda:InvokeFunction limited to calls
 # made through the URL. Safe to re-run: existing URL and permissions are kept.
 # Log: logs\function-url.log

@@ -10,8 +10,7 @@ import { APP_NAME } from '../app-name';
     <h2 mat-dialog-title>About {{ appName }}</h2>
     <mat-dialog-content>
       <p>
-        An Angular and Angular Material front end, backed by a Spring Boot account API,
-        with sign-in provided by Amazon Cognito.
+        An Angular and Angular Material front end, backed by a Spring Boot API on AWS Lambda.
       </p>
       <p>The dashboard cards describe each technology and how this application uses it.</p>
     </mat-dialog-content>

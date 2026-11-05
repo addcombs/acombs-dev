@@ -1,36 +1,3 @@
-@if (auth.status() === 'loading') {
-  <main class="auth-screen" aria-live="polite">
-    <p>Checking your session...</p>
-  </main>
-} @else if (auth.status() === 'notConfigured') {
-  <main class="auth-screen">
-    <h1 class="welcome-title">Welcome to {{ appName }}</h1>
-    <p>Authentication setup is required before you can sign in or create an account.</p>
-    <p>Run <code>scripts/create-cognito-pool.ps1</code>; it writes this app's Cognito settings to <code>src/app/project.settings.ts</code>.</p>
-  </main>
-} @else if (auth.status() === 'signedOut' || auth.status() === 'invalid') {
-  <main class="auth-screen">
-    @if (registrationOpen() && auth.status() === 'signedOut') {
-      @defer (when registrationOpen()) {
-        <app-registration (backToSignIn)="registrationOpen.set(false)" />
-      } @loading {
-        <p>Loading registration...</p>
-      }
-    } @else {
-    <h1 class="welcome-title">Welcome to {{ appName }}</h1>
-    <p>Sign in or create an account to continue.</p>
-    @if (auth.error()) {
-      <p class="auth-error" role="alert">{{ auth.error() }}</p>
-    }
-    @if (auth.status() === 'invalid') {
-      <button mat-flat-button type="button" [disabled]="auth.busy()" (click)="auth.signOut()">Clear session</button>
-    } @else {
-      <button mat-flat-button type="button" [disabled]="auth.busy()" (click)="auth.signIn()">Sign in</button>
-      <button mat-button type="button" [disabled]="auth.busy()" (click)="registrationOpen.set(true)">Create account</button>
-    }
-    }
-  </main>
-} @else {
 <mat-sidenav-container class="app-container">
   <mat-sidenav
     id="app-sidenav"
@@ -111,26 +78,6 @@
       <button
         mat-icon-button
         type="button"
-        aria-label="Profile"
-        matTooltip="Profile"
-        [matMenuTriggerFor]="profileMenu"
-      >
-        <mat-icon>account_circle</mat-icon>
-      </button>
-      <mat-menu #profileMenu="matMenu">
-        <div class="profile-name">{{ profileName() }}</div>
-        <button mat-menu-item type="button" [disabled]="account.state() !== 'ready'" (click)="account.open()">
-          <mat-icon>manage_accounts</mat-icon>
-          <span>Account details</span>
-        </button>
-        <button mat-menu-item type="button" [disabled]="auth.busy()" (click)="auth.signOut()">
-          <mat-icon>logout</mat-icon>
-          <span>Sign out</span>
-        </button>
-      </mat-menu>
-      <button
-        mat-icon-button
-        type="button"
         aria-label="More options"
         matTooltip="More options"
         [matMenuTriggerFor]="moreMenu"
@@ -150,17 +97,7 @@
     </mat-toolbar>
 
     <main>
-      @if (auth.error()) {
-        <p class="auth-error" role="alert">{{ auth.error() }}</p>
-      }
-      @if (account.state() === 'loading' || account.state() === 'idle') {
-        <p aria-live="polite">Loading account details...</p>
-      } @else if (account.state() === 'error') {
-        <p class="auth-error" role="alert">{{ account.error() }}</p>
-        <button mat-button type="button" (click)="account.load()">Try again</button>
-      } @else if (account.state() === 'ready') {
-        <h1 class="welcome-title">Welcome to {{ appName }}@if (account.details()?.firstName || auth.firstName()) {, {{ account.details()?.firstName || auth.firstName() }}}!</h1>
-      }
+      <h1 class="welcome-title">Welcome to {{ appName }}!</h1>
       <mat-tab-group class="technology-tabs" mat-stretch-tabs="false" dynamicHeight aria-label="Technologies"
         [selectedIndex]="selectedTechnologyGroup()"
         (selectedIndexChange)="selectedTechnologyGroup.set($event)">
@@ -201,4 +138,3 @@
     </footer>
   </mat-sidenav-content>
 </mat-sidenav-container>
-}

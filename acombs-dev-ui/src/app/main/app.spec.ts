@@ -2,62 +2,36 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { MATERIAL_ANIMATIONS } from '@angular/material/core';
-import { MatDialog, MatDialogState } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { App } from './app';
-import { AuthService } from '../auth/auth.service';
-import { AccountService, AccountDetails } from './account/account.service';
 import { ApiStatusService } from './api-status/api-status.service';
 import { BRIGHTNESS_STORAGE_KEY } from '../theme/theme.service';
 
 describe('App', () => {
-  const auth = {
-    status: signal<'loading' | 'notConfigured' | 'signedOut' | 'signedIn' | 'invalid'>('signedIn'),
-    firstName: signal(''),
-    email: signal('user@example.com'),
-    error: signal(''),
-    busy: signal(false),
-    signIn: vi.fn(),
-    signOut: vi.fn(),
-  };
-  const account = {
-    state: signal<'idle' | 'loading' | 'ready' | 'missing' | 'error'>('ready'),
-    details: signal<AccountDetails | null>(null),
-    editing: signal(false),
-    saving: signal(false),
-    error: signal(''),
-    load: vi.fn(),
-    open: vi.fn(() => account.editing.set(true)),
-    cancel: vi.fn(() => account.editing.set(false)),
-    reset: vi.fn(),
-    save: vi.fn(),
-  };
   const apiStatus = { status: signal<'checking' | 'up' | 'down'>('checking') };
 
   beforeEach(async () => {
     localStorage.clear();
     document.documentElement.classList.remove('dark-theme');
-    auth.status.set('signedIn');
-    auth.error.set('');
-    auth.firstName.set('');
-    auth.busy.set(false);
-    account.state.set('ready');
-    account.details.set(null);
-    account.editing.set(false);
-    account.saving.set(false);
-    account.error.set('');
     apiStatus.status.set('checking');
     vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         { provide: BreakpointObserver, useValue: { observe: () => of({ matches: true }) } },
-        { provide: AuthService, useValue: auth },
-        { provide: AccountService, useValue: account },
         { provide: ApiStatusService, useValue: apiStatus },
         { provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } },
       ],
     }).compileComponents();
+  });
+
+  it('shows the dashboard without signing in', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('mat-sidenav-container')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('main h1').textContent.trim()).toBe('Welcome to Acombs Dev!');
+    expect(fixture.nativeElement.querySelector('button[aria-label="Profile"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toMatch(/sign in|sign out|account/i);
   });
 
   it('starts with the sidenav closed', () => {
@@ -102,12 +76,10 @@ describe('App', () => {
     const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
     expect(tabs.map((tab) => tab.textContent?.trim())).toEqual(['Front-end', 'Back-end', 'Cloud', 'Tools']);
     const expected = [
-      ['Angular', 'Angular Material', 'Angular CDK', 'Angular Reactive Forms', 'Angular Signals', 'TypeScript', 'RxJS', 'Sass', 'SVG',
+      ['Angular', 'Angular Material', 'Angular CDK', 'Angular Signals', 'TypeScript', 'RxJS', 'Sass', 'SVG',
         'Material Icons & Lato', 'Vitest', 'Angular CLI', 'Node.js & npm'],
-      ['Java', 'Spring Boot', 'Spring Security', 'Spring Data JPA', 'Bean Validation', 'Spring Boot Actuator', 'Swagger UI',
-        'JUnit & Mockito', 'Maven', 'Spring Boot DevTools', 'PostgreSQL', 'SQL migrations'],
-      ['AWS Amplify', 'Amazon Cognito', 'Neon', 'AWS Lambda', 'Amazon CloudFront', 'Amazon S3', 'AWS Certificate Manager',
-        'Amazon CloudWatch Logs'],
+      ['Java', 'Spring Boot', 'Spring Boot Actuator', 'Swagger UI', 'JUnit', 'Maven', 'Spring Boot DevTools'],
+      ['AWS Lambda', 'Amazon CloudFront', 'Amazon S3', 'AWS Certificate Manager', 'Amazon Route 53', 'Amazon CloudWatch Logs'],
       ['Claude', 'PowerShell scripts', 'AWS CLI'],
     ];
     const visibleCards = (label: string): HTMLElement[] => Array.from(
@@ -123,6 +95,7 @@ describe('App', () => {
       cards.forEach((card, cardIndex) => {
         expect(card.style.getPropertyValue('--card-index')).toBe(String(cardIndex));
         expect(card.querySelector('mat-card-content p')?.textContent?.trim().length).toBeGreaterThan(50);
+        expect(card.querySelector('mat-card-content')?.textContent).not.toMatch(/cognito|account|sign-in|database/i);
         const logo = card.querySelector<HTMLImageElement>('mat-card-header img.technology-logo');
         const icon = card.querySelector<HTMLElement>('mat-card-header mat-icon.technology-icon');
         expect(Boolean(logo) !== Boolean(icon)).toBe(true);
@@ -145,16 +118,15 @@ describe('App', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const cloud = visibleCards('Cloud');
-    expect(cloud[1].querySelector('img')?.getAttribute('src')).toBe('logos/amazon-cognito.svg');
-    expect(cloud[2].querySelector('img')?.getAttribute('src')).toBe('logos/neon.svg');
+    expect(cloud[0].querySelector('mat-icon.technology-icon')?.textContent?.trim()).toBe('bolt');
+    expect(cloud[4].querySelector('mat-card-content')?.textContent).toContain('alias records');
     tabs[1].click();
     fixture.detectChanges();
     await fixture.whenStable();
     const backEndCards = visibleCards('Back-end');
-    expect(backEndCards[4].querySelector('img')?.getAttribute('src')).toBe('logos/hibernate.svg');
-    expect(backEndCards[5].querySelector('mat-card-content')?.textContent).toContain('health check');
-    expect(backEndCards[6].querySelector('img')?.getAttribute('src')).toBe('logos/swagger.svg');
-    expect(backEndCards[7].querySelector('img')?.getAttribute('src')).toBe('logos/junit.svg');
+    expect(backEndCards[2].querySelector('mat-card-content')?.textContent).toContain('health check');
+    expect(backEndCards[3].querySelector('img')?.getAttribute('src')).toBe('logos/swagger.svg');
+    expect(backEndCards[4].querySelector('img')?.getAttribute('src')).toBe('logos/junit.svg');
   });
 
   it('selects technology tabs from the side menu', async () => {
@@ -252,102 +224,6 @@ describe('App', () => {
     }
   });
 
-  it('hides app content while signed out and starts sign-in', () => {
-    auth.status.set('signedOut');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('mat-sidenav-container')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.card-grid')).toBeNull();
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.auth-screen button');
-    button.click();
-    expect(auth.signIn).toHaveBeenCalledOnce();
-  });
-
-  it('explains that authentication must be configured before sign-in', () => {
-    auth.status.set('notConfigured');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('Authentication setup is required');
-    expect(fixture.nativeElement.textContent).toContain('scripts/create-cognito-pool.ps1');
-    expect(fixture.nativeElement.querySelector('mat-sidenav-container')).toBeNull();
-  });
-
-  it('shows auth errors when signed out', () => {
-    auth.status.set('signedOut');
-    auth.error.set('Sign-in failed.');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Sign-in failed.');
-  });
-
-  it('opens the in-app registration form', async () => {
-    auth.status.set('signedOut');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
-    buttons.find((button) => button.textContent?.includes('Create account'))?.click();
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('app-registration')).not.toBeNull();
-  });
-
-  it('opens the profile menu and signs out', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-label="Profile"]');
-    button.click();
-    fixture.detectChanges();
-    const menu = document.querySelector('.mat-mdc-menu-panel');
-    expect(menu?.textContent).toContain('user@example.com');
-    const buttons = Array.from(menu?.querySelectorAll('button') ?? []);
-    buttons.find((item) => item.textContent?.includes('Sign out'))?.click();
-    expect(auth.signOut).toHaveBeenCalledOnce();
-  });
-
-  it('shows available names in the profile menu and updates when account details change', () => {
-    account.details.set({ email: 'user@example.com', firstName: ' Jane ', lastName: ' Doe ', phoneNumber: null });
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('button[aria-label="Profile"]').click();
-    fixture.detectChanges();
-    const profileName = document.querySelector('.mat-mdc-menu-panel .profile-name');
-    expect(profileName?.textContent?.trim()).toBe('Jane Doe');
-
-    account.details.set({ email: 'user@example.com', firstName: null, lastName: 'Doe', phoneNumber: null });
-    fixture.detectChanges();
-    expect(profileName?.textContent?.trim()).toBe('Doe');
-
-    account.details.set({ email: 'user@example.com', firstName: 'Jane', lastName: '  ', phoneNumber: null });
-    fixture.detectChanges();
-    expect(profileName?.textContent?.trim()).toBe('Jane');
-
-    account.details.set({ email: 'user@example.com', firstName: ' ', lastName: null, phoneNumber: null });
-    fixture.detectChanges();
-    expect(profileName?.textContent?.trim()).toBe('user@example.com');
-  });
-
-  it('uses the Cognito first name when account details have no first name', () => {
-    auth.firstName.set('Alex');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('button[aria-label="Profile"]').click();
-    fixture.detectChanges();
-    expect(document.querySelector('.mat-mdc-menu-panel .profile-name')?.textContent?.trim()).toBe('Alex');
-  });
-
-  it('opens account details from the profile menu', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('button[aria-label="Profile"]').click();
-    fixture.detectChanges();
-    const buttons = Array.from(document.querySelectorAll('.mat-mdc-menu-panel button'));
-    (buttons.find((item) => item.textContent?.includes('Account details')) as HTMLButtonElement).click();
-    fixture.detectChanges();
-    expect(account.open).toHaveBeenCalledOnce();
-    expect(document.querySelector('[role="dialog"]')?.textContent).toContain('Account details');
-  });
-
   it('places a more-options menu last in the toolbar with API docs and About', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
@@ -365,162 +241,8 @@ describe('App', () => {
     const about = Array.from(panel?.querySelectorAll('button') ?? []).find((item) => item.textContent?.includes('About'));
     about?.click();
     fixture.detectChanges();
-    expect(document.querySelector('[role="dialog"] h2')?.textContent).toContain('About');
-  });
-
-  it('shows onboarding when account details are missing', () => {
-    account.state.set('missing');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    expect(dialog.textContent).toContain('Complete your account details');
-    const email = dialog.querySelector('textarea.account-email') as HTMLTextAreaElement;
-    expect(email.value).toBe('user@example.com');
-    expect(email.readOnly).toBe(true);
-    dialog.querySelector('form')?.dispatchEvent(new Event('submit'));
-    expect(account.save).not.toHaveBeenCalled();
-    expect(TestBed.inject(MatDialog).openDialogs[0].disableClose).toBe(true);
-    Array.from(dialog.querySelectorAll('button')).find((button) => button.textContent?.includes('Sign out'))?.click();
-    expect(auth.signOut).toHaveBeenCalledOnce();
-  });
-
-  it('shows a retry action when loading fails', () => {
-    account.state.set('error');
-    account.error.set('Could not load account details.');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    fixture.nativeElement.querySelector('main button').click();
-    expect(account.load).toHaveBeenCalled();
-  });
-
-  it('edits account details and submits trimmed values', () => {
-    account.editing.set(true);
-    account.details.set({ email: 'user@example.com', firstName: 'Old', lastName: 'Name', phoneNumber: null });
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    const first = dialog.querySelector('input[formControlName="firstName"]') as HTMLInputElement;
-    const last = dialog.querySelector('input[formControlName="lastName"]') as HTMLInputElement;
-    const phone = dialog.querySelector('input[formControlName="phoneNumber"]') as HTMLInputElement;
-    expect(first.value).toBe('Old');
-    first.value = ' Jane ';
-    last.value = ' Doe ';
-    phone.value = ' 123 ';
-    for (const input of [first, last, phone]) input.dispatchEvent(new Event('input'));
-    dialog.querySelector('form')?.dispatchEvent(new Event('submit'));
-    expect(account.save).toHaveBeenCalledWith({ firstName: 'Jane', lastName: 'Doe', phoneNumber: '123' });
-    const buttons = Array.from(dialog.querySelectorAll('button'));
-    buttons.find((button) => button.textContent?.includes('Cancel'))?.click();
-    expect(account.cancel).toHaveBeenCalledOnce();
-  });
-
-  it('only enables account Save when normalized form values change', () => {
-    account.editing.set(true);
-    account.details.set({ email: 'user@example.com', firstName: 'Jane', lastName: 'Doe', phoneNumber: null });
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    const save = dialog.querySelector('button[type="submit"]') as HTMLButtonElement;
-    const first = dialog.querySelector('input[formControlName="firstName"]') as HTMLInputElement;
-    const phone = dialog.querySelector('input[formControlName="phoneNumber"]') as HTMLInputElement;
-    expect(save.disabled).toBe(true);
-    dialog.querySelector('form')?.dispatchEvent(new Event('submit'));
-    expect(account.save).not.toHaveBeenCalled();
-
-    first.value = ' Jane ';
-    first.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(save.disabled).toBe(true);
-
-    phone.value = '123';
-    phone.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(save.disabled).toBe(false);
-
-    account.saving.set(true);
-    fixture.detectChanges();
-    expect(save.disabled).toBe(true);
-    account.saving.set(false);
-    phone.value = '';
-    phone.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(save.disabled).toBe(true);
-  });
-
-  it('enables Save for changed onboarding details', () => {
-    account.state.set('missing');
-    auth.firstName.set('Jane');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    const save = dialog.querySelector('button[type="submit"]') as HTMLButtonElement;
-    const last = dialog.querySelector('input[formControlName="lastName"]') as HTMLInputElement;
-    expect(save.disabled).toBe(true);
-    last.value = 'Doe';
-    last.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-    expect(save.disabled).toBe(false);
-    dialog.querySelector('form')?.dispatchEvent(new Event('submit'));
-    expect(account.save).toHaveBeenCalledWith({ firstName: 'Jane', lastName: 'Doe', phoneNumber: null });
-  });
-
-  it('closes the dialog when onboarding succeeds or the user signs out', () => {
-    account.state.set('missing');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = TestBed.inject(MatDialog);
-    expect(dialog.openDialogs.length).toBe(1);
-    const onboarding = dialog.openDialogs[0];
-    account.state.set('ready');
-    fixture.detectChanges();
-    expect(onboarding.getState()).not.toBe(MatDialogState.OPEN);
-
-    account.editing.set(true);
-    fixture.detectChanges();
-    auth.status.set('signedOut');
-    fixture.detectChanges();
-    expect(dialog.openDialogs.every((ref) => ref.getState() !== MatDialogState.OPEN)).toBe(true);
-  });
-
-  it('keeps the form open and shows errors from account save or sign-out', () => {
-    account.state.set('missing');
-    account.error.set('Could not save account details.');
-    auth.error.set('Sign-out failed.');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
-    expect(dialog.textContent).toContain('Could not save account details.');
-    expect(dialog.textContent).toContain('Sign-out failed.');
-    expect(TestBed.inject(MatDialog).openDialogs[0].getState()).toBe(MatDialogState.OPEN);
-  });
-
-  it('synchronizes editing when the dialog is dismissed and blocks dismissal while saving', () => {
-    account.editing.set(true);
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const dialog = TestBed.inject(MatDialog);
-    const ref = dialog.openDialogs[0];
-    expect(ref.disableClose).toBe(false);
-    account.saving.set(true);
-    fixture.detectChanges();
-    expect(ref.disableClose).toBe(true);
-    account.saving.set(false);
-    fixture.detectChanges();
-    ref.close();
-    expect(account.cancel).toHaveBeenCalledOnce();
-    expect(account.editing()).toBe(false);
-  });
-
-  it('greets signed-in users by first name when available', () => {
-    auth.firstName.set('Alex');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('main h1').textContent).toContain('Welcome to Acombs Dev, Alex');
-  });
-
-  it('keeps the generic greeting for users without a first name', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('main h1').textContent.trim()).toBe('Welcome to Acombs Dev!');
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog?.querySelector('h2')?.textContent).toContain('About');
+    expect(dialog?.textContent).not.toMatch(/cognito|sign-in/i);
   });
 });
