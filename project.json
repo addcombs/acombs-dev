@@ -4,5 +4,5 @@
   "developerName": "Adam Combs",
   "aws": { "profile": "default", "region": "us-east-2" },
   "domain": { "apex": "acombs-dev.com", "host": "acombs-dev.com", "dnsProvider": "Squarespace" },
-  "theme": { "primary": "#3F51B5", "secondary": "#D8C3A5" }
+  "theme": { "primary": "#3F51B5" }
 }

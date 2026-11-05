@@ -65,7 +65,7 @@ export class App {
       icon: 'web',
       technologies: [
         { name: 'Angular', logo: 'logos/angular.svg', description: 'Front-end framework', usage: 'Builds the app screens and keeps the navigation, theme, and API status in sync with application state.' },
-        { name: 'Angular Material', logo: 'logos/angularmaterial.svg', description: 'Material Design 3 components and theming', usage: 'Provides the toolbar, navigation drawer, dialogs, cards, buttons, and theme-aware controls; its theme-color schematic generated the #3F51B5 primary and #D8C3A5 secondary palettes.' },
+        { name: 'Angular Material', logo: 'logos/angularmaterial.svg', description: 'Material Design 3 components and theming', usage: 'Provides the toolbar, navigation drawer, dialogs, cards, buttons, and theme-aware controls; its theme-color schematic generated the palettes from the single #3F51B5 indigo.' },
         { name: 'Angular CDK', logo: 'logos/angularmaterial.svg', description: 'Component Dev Kit behavior primitives', usage: 'Watches screen-size breakpoints so the navigation drawer docks on wide screens and overlays on narrow ones.' },
         { name: 'Angular Signals', logo: 'logos/angular.svg', description: 'Reactive application state', usage: 'Hold the theme brightness, selected tab, drawer state, and API status, so the screens update automatically whenever any of them change.' },
         { name: 'TypeScript', logo: 'logos/typescript.svg', description: 'Typed application code', usage: 'Defines types for the technology cards and services so mistakes can be caught during development.' },
