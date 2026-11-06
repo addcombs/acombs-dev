@@ -15,16 +15,14 @@ CloudFront distributions, since the root domain cannot have a CNAME.
 ## Set up
 
 1. `scripts\start-all.ps1` - theme palettes, build, tests, and the app at http://localhost:4200/
-2. `scripts\build-lambda.ps1`, `scripts\deploy-api.ps1`, then `scripts\create-function-url.ps1` -
-   the API on Lambda
+2. `scripts\deploy-api.ps1` (builds, tests and creates the function), then
+   `scripts\create-function-url.ps1` - the API on Lambda
 3. `scripts\request-certificate.ps1` - add the validation CNAMEs it prints to the Route 53 zone and
    re-run it until both certificates are issued
-4. `scripts\create-ui-bucket.ps1`, `scripts\create-cloudfront.ps1`,
-   `scripts\create-api-cloudfront.ps1`, `scripts\deploy-ui.ps1`
+4. `scripts\create-ui-bucket.ps1`, `scripts\create-cloudfront.ps1`, `scripts\create-api-cloudfront.ps1`
 5. In Route 53: alias A and AAAA records for the host and `api.` host to the CloudFront domains the
    scripts print
-
-After that, `scripts\test-all.ps1` runs both apps' tests.
+6. Run the Deploy UI workflow from the repository's Actions tab (Run workflow) for the UI's first deploy
 
 ## Deploying
 
@@ -32,8 +30,8 @@ Pushing to `main` deploys automatically through GitHub Actions: `.github/workflo
 when `acombs-dev-ui` changes and `deploy-api.yml` when `acombs-dev-api` changes. Each runs the tests
 first and deploys only if they pass; either can also be run by hand from the repository's Actions
 tab. The API workflow updates the function's code only, so a change to its settings (environment
-variables, memory, role) still needs `scripts\deploy-api.ps1`, which is also the manual deploy, as
-`scripts\deploy-ui.ps1` is for the UI.
+variables, memory, role) still needs `scripts\deploy-api.ps1`. `scripts\start-all.ps1` builds and
+tests both apps locally before starting them.
 
 The workflows sign in to AWS with GitHub's OIDC token as the `acombs-dev-github-deploy` IAM role,
 so no AWS keys are stored in GitHub. The role trusts only pushes to `main` of

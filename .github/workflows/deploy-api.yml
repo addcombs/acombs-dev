@@ -1,5 +1,5 @@
 # Tests the API and deploys it to https://api.acombs-dev.com on every push to main that changes it,
-# doing what scripts\build-lambda.ps1 and deploy-api.ps1 do for an existing function: upload the
+# doing what scripts\deploy-api.ps1 does for an existing function: build and upload the
 # package, publish a SnapStart version and point the `live` alias at it. The function's settings
 # (environment variables, memory, role) are left as deploy-api.ps1 set them. AWS access comes from
 # the acombs-dev-github-deploy role through GitHub's OIDC token (see .github/aws).

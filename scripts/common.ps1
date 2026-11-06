@@ -79,8 +79,8 @@ $npmCommand = if ($npmCli) { "& '$nodeExe' '$npmCli'" } else { '& npm.cmd' }
 function Sync-UiConfig {
   function Ts($s) { "'" + ("$s" -replace '\\', '\\' -replace "'", "\'") + "'" }
   $text = @(
-    "// Generated from project.json by Sync-UiConfig in scripts\common.ps1, which start-all and",
-    '// deploy-ui run before building. Edit project.json, not this file.',
+    "// Generated from project.json by Sync-UiConfig in scripts\common.ps1, which start-all runs",
+    '// before building. Edit project.json, not this file.',
     'export const PROJECT_SETTINGS = {',
     "  appName: $(Ts $app),",
     "  displayName: $(Ts $project.displayName),",

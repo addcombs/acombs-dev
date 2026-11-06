@@ -1,5 +1,5 @@
 # Tests the UI and deploys it to https://acombs-dev.com on every push to main that changes it,
-# doing what scripts\deploy-ui.ps1 does. AWS access comes from the acombs-dev-github-deploy role
+# and can be run by hand from the Actions tab. AWS access comes from the acombs-dev-github-deploy role
 # through GitHub's OIDC token, so no AWS keys are stored in GitHub (see .github/aws).
 name: Deploy UI
 

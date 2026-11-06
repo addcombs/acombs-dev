@@ -108,7 +108,7 @@ export class App {
       icon: 'build',
       technologies: [
         { name: 'Claude', icon: 'smart_toy', description: 'AI coding agent by Anthropic', usage: 'Generated this application from the angular-app and spring-boot-app agents and templates provided by Adam Combs.' },
-        { name: 'PowerShell scripts', icon: 'terminal', description: 'Setup, tests, start-up, and deployment', usage: 'scripts/start-all.ps1 installs dependencies, builds and tests both apps, then starts the API and UI; scripts/test-all.ps1 reruns the UI tests and API build; the create-*, deploy-api, and deploy-ui scripts set up and deploy to AWS from project.json.' },
+        { name: 'PowerShell scripts', icon: 'terminal', description: 'Setup, tests, and start-up', usage: 'scripts/start-all.ps1 installs dependencies, builds and tests both apps, then starts the API and UI; the create-* and deploy-api scripts set up AWS from project.json, and GitHub Actions deploys each push to main.' },
         { name: 'AWS CLI', icon: 'keyboard', description: 'Command-line access to AWS', usage: 'Runs every AWS step in the setup and deploy scripts, from requesting certificates to uploading the UI and publishing new Lambda versions.' },
       ],
     },
