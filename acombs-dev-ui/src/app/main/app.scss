@@ -106,6 +106,12 @@ mat-sidenav mat-divider {
 
 .app-credit-name {
   color: var(--mat-sys-secondary);
+  text-decoration: none;
+}
+
+.app-credit-name:hover,
+.app-credit-name:focus-visible {
+  text-decoration: underline;
 }
 
 .welcome-title {
