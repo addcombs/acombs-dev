@@ -1,6 +1,6 @@
 {
   "name": "acombs-dev",
-  "displayName": "Adam Combs - AI Solutions Engineer",
+  "displayName": "Adam Combs - Full Stack Developer",
   "developerName": "Adam Combs",
   "aws": { "profile": "default", "region": "us-east-2" },
   "domain": { "apex": "acombs-dev.com", "host": "acombs-dev.com", "dnsProvider": "Squarespace" },

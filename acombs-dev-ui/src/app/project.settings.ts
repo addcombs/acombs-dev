@@ -2,7 +2,7 @@
 // before building. Edit project.json, not this file.
 export const PROJECT_SETTINGS = {
   appName: 'acombs-dev',
-  displayName: 'Adam Combs - AI Solutions Engineer',
+  displayName: 'Adam Combs - Full Stack Developer',
   developerName: 'Adam Combs',
   apiUrl: 'https://api.acombs-dev.com',
 };
