@@ -61,10 +61,11 @@ mat-sidenav mat-divider {
   display: block;
   flex-shrink: 0;
   height: 88px;
-  margin-left: 4px;
 }
 
+// Tucked 4 px toward the logo, as its box ends just past the crossbar's tip.
 .app-title {
+  margin-left: -4px;
   font-size: 1.25rem;
 }
 

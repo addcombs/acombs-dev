@@ -34,6 +34,15 @@ describe('App', () => {
     expect(fixture.nativeElement.textContent).not.toMatch(/sign in|sign out|account/i);
   });
 
+  it('lets the logo stand for the title\'s first letter, which is still read out', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const title: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar .app-title');
+    expect(title.textContent).toBe('Adam Combs - Full Stack Developer');
+    expect(title.querySelector('.cdk-visually-hidden')?.textContent).toBe('A');
+    expect(fixture.nativeElement.querySelector('mat-toolbar svg.app-logo').getAttribute('aria-hidden')).toBe('true');
+  });
+
   it('starts with the sidenav closed', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
