@@ -67,9 +67,9 @@ mat-sidenav mat-divider {
   height: 88px;
 }
 
-// Tucked 4 px toward the logo, as its box ends just past the crossbar's tip.
+// Tucked under the tip of the logo's crossbar, which rises above the text, so the two read as one word.
 .app-title {
-  margin-left: -4px;
+  margin-left: -16px;
   font-size: 1.25rem;
 }
 
