@@ -169,6 +169,8 @@ describe('App', () => {
     expect(cards.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe('Cards');
     expect(cards.getAttribute('href')).toBe('https://cards.acombs-dev.com/');
     expect(cards.previousElementSibling?.tagName).toBe('MAT-DIVIDER');
+    // Its icon shows all four sports, two by two.
+    expect(cards.querySelectorAll('svg.cards-icon[matListItemIcon] path').length).toBe(4);
   });
 
   it('toggles the sidenav from the hamburger button', () => {
