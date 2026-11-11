@@ -5,7 +5,7 @@ adjustable brightness, and a technology dashboard, open to everyone without sign
 The toolbar uses the theme surface color with primary-colored text and icons,
 over a decorative inline SVG pixel mosaic (`src/app/theme/toolbar-background.ts`)
 filled with the theme's primary and secondary colors, so it follows light/dark mode and brightness. The footer
-displays the API's health, polling `/actuator/health` every 30 seconds.
+displays the API's health, polling `/actuator/health` every 5 minutes.
 The dashboard cards explain the roles of the included technologies and are
 grouped into Front-end, Back-end, Cloud, and Tools tabs, also reachable from the side menu.
 The Material 3 palettes are generated from the single indigo `#3F51B5`, which Material also tones down for the secondary color
