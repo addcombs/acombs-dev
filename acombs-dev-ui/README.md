@@ -8,6 +8,11 @@ filled with the theme's primary and secondary colors, so it follows light/dark m
 displays the API's health, polling `/actuator/health` every 5 minutes.
 The dashboard cards explain the roles of the included technologies and are
 grouped into Front-end, Back-end, Cloud, and Tools tabs, also reachable from the side menu.
+Each card opens a page (`src/app/technologies/technology-page.ts`) on what's great about that
+technology's latest release, with the version this site runs and a link to the official notes. The
+content lives in `src/app/technologies/technologies.ts`, with the date it was last checked
+(`CHECKED_ON`). Pages use hash URLs, such as `/#/technologies/angular`, because the static S3 and
+CloudFront hosting has no fallback that would serve `index.html` for other paths.
 The Material 3 palettes are generated from the single indigo `#3F51B5`, which Material also tones down for the secondary color
 (`src/app/theme/generated_theme-colors.scss`, via `ng generate @angular/material:theme-color`).
 

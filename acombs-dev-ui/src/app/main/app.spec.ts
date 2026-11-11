@@ -1,10 +1,12 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { TestBed } from '@angular/core/testing';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { signal } from '@angular/core';
 import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { of } from 'rxjs';
 import { App } from './app';
 import { ApiStatusService } from './api-status/api-status.service';
+import { routes } from '../app.routes';
 import { BRIGHTNESS_STORAGE_KEY } from '../theme/theme.service';
 
 describe('App', () => {
@@ -15,44 +17,54 @@ describe('App', () => {
     document.documentElement.classList.remove('dark-theme');
     apiStatus.status.set('checking');
     vi.clearAllMocks();
+    // jsdom has no element scrolling; the app scrolls its content to the top on each navigation.
+    Element.prototype.scrollTo ??= () => undefined;
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         { provide: BreakpointObserver, useValue: { observe: () => of({ matches: true }) } },
         { provide: ApiStatusService, useValue: apiStatus },
         { provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } },
+        provideRouter(routes, withComponentInputBinding()),
       ],
     }).compileComponents();
   });
 
-  it('shows the dashboard without signing in', () => {
+  /** The app, opened at url (the dashboard by default) and settled. */
+  async function createApp(url = '/') {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
+    await TestBed.inject(Router).navigateByUrl(url);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('shows the dashboard without signing in', async () => {
+    const fixture = await createApp();
     expect(fixture.nativeElement.querySelector('mat-sidenav-container')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('main h1').textContent.trim()).toBe('Welcome!');
     expect(fixture.nativeElement.querySelector('button[aria-label="Profile"]')).toBeNull();
     expect(fixture.nativeElement.textContent).not.toMatch(/sign in|sign out|account/i);
   });
 
-  it('lets the logo stand for the title\'s first letter, which is still read out', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('lets the logo stand for the title\'s first letter, which is still read out', async () => {
+    const fixture = await createApp();
     const title: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar .app-title');
     expect(title.textContent).toBe('Adam Combs - Full Stack Developer');
     expect(title.querySelector('.cdk-visually-hidden')?.textContent).toBe('A');
     expect(fixture.nativeElement.querySelector('mat-toolbar svg.app-logo').getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('starts with the sidenav closed', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('starts with the sidenav closed', async () => {
+    const fixture = await createApp();
     const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-controls="app-sidenav"]');
     expect(button.getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('credits the developer in the footer', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('credits the developer in the footer', async () => {
+    const fixture = await createApp();
     const credit: HTMLElement = fixture.nativeElement.querySelector('footer.app-footer .app-credit');
     expect(credit.textContent?.trim()).toBe('Developed by Adam Combs');
     const name = credit.querySelector('a.app-credit-name') as HTMLAnchorElement;
@@ -60,9 +72,8 @@ describe('App', () => {
     expect(name.href).toBe('https://acombs-dev.com/');
   });
 
-  it('shows the current API health in the footer, not the toolbar', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('shows the current API health in the footer, not the toolbar', async () => {
+    const fixture = await createApp();
     const icon: HTMLElement = fixture.nativeElement.querySelector('footer.app-footer .api-status');
     expect(icon).toBeTruthy();
     expect(fixture.nativeElement.querySelector('mat-toolbar .api-status')).toBeNull();
@@ -86,8 +97,7 @@ describe('App', () => {
   });
 
   it('groups technology cards into front-end, back-end, cloud, and tools tabs', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    const fixture = await createApp();
     await fixture.whenStable();
     const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
     expect(tabs.map((tab) => tab.textContent?.trim())).toEqual(['Front-end', 'Back-end', 'Cloud', 'Tools']);
@@ -146,8 +156,7 @@ describe('App', () => {
   });
 
   it('selects technology tabs from the side menu', async () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    const fixture = await createApp();
     await fixture.whenStable();
     const navItems: HTMLElement[] = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link)'));
     expect(navItems.map((item) => item.querySelector('[matListItemTitle]')?.textContent?.trim()))    .toEqual(['Front-end', 'Back-end', 'Cloud', 'Tools']);
@@ -161,9 +170,8 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('section.card-grid[aria-label="Cloud technologies"]')).not.toBeNull();
   });
 
-  it('links to the Cards site last in the side menu', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('links to the Cards site last in the side menu', async () => {
+    const fixture = await createApp();
     const items: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]'));
     const cards = items[items.length - 1];
     expect(cards.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe('Cards');
@@ -173,18 +181,16 @@ describe('App', () => {
     expect(cards.querySelectorAll('svg.cards-icon[matListItemIcon] path').length).toBe(4);
   });
 
-  it('toggles the sidenav from the hamburger button', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('toggles the sidenav from the hamburger button', async () => {
+    const fixture = await createApp();
     const button: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-controls="app-sidenav"]');
     button.click();
     fixture.detectChanges();
     expect(button.getAttribute('aria-expanded')).toBe('true');
   });
 
-  it('closes the sidenav from its toolbar', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('closes the sidenav from its toolbar', async () => {
+    const fixture = await createApp();
     const toggle: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-label="Toggle navigation menu"]');
     toggle.click();
     fixture.detectChanges();
@@ -197,8 +203,7 @@ describe('App', () => {
 
   it('uses an overlay sidenav on narrow screens', async () => {
     TestBed.overrideProvider(BreakpointObserver, { useValue: { observe: () => of({ matches: false }) } });
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    const fixture = await createApp();
     const sidenav = fixture.nativeElement.querySelector('mat-sidenav');
     expect(sidenav.classList.contains('mat-drawer-side')).toBe(false);
     expect(sidenav.classList.contains('mat-sidenav-fixed')).toBe(true);
@@ -210,10 +215,9 @@ describe('App', () => {
     await vi.waitFor(() => expect(document.activeElement).toBe(sidenav.querySelector('h2')));
   });
 
-  it('hides the slider until the brightness icon is clicked and toggles it closed', () => {
+  it('hides the slider until the brightness icon is clicked and toggles it closed', async () => {
     localStorage.setItem(BRIGHTNESS_STORAGE_KEY, '100');
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+    const fixture = await createApp();
     const toggle: HTMLButtonElement = fixture.nativeElement.querySelector('button[aria-label="Adjust brightness"]');
     const control: HTMLElement = fixture.nativeElement.querySelector('.brightness-control');
     expect(toggle.querySelector('mat-icon')?.textContent?.trim()).toBe('light_mode');
@@ -230,9 +234,8 @@ describe('App', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('adjusts brightness from an unlabeled horizontal slider before the theme button', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('adjusts brightness from an unlabeled horizontal slider before the theme button', async () => {
+    const fixture = await createApp();
     const control: HTMLElement = fixture.nativeElement.querySelector('.brightness-control');
     (control.nextElementSibling as HTMLButtonElement).click();
     fixture.detectChanges();
@@ -252,9 +255,8 @@ describe('App', () => {
     }
   });
 
-  it('places a more-options menu last in the toolbar with About, the API docs being in the footer', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('places a more-options menu last in the toolbar with About, the API docs being in the footer', async () => {
+    const fixture = await createApp();
     const toolbarButtons = fixture.nativeElement.querySelectorAll('.app-content > .app-toolbar > button');
     const more: HTMLButtonElement = toolbarButtons[toolbarButtons.length - 1];
     expect(more.getAttribute('aria-label')).toBe('More options');
@@ -268,5 +270,59 @@ describe('App', () => {
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog?.querySelector('h2')?.textContent).toContain('About');
     expect(dialog?.textContent).not.toMatch(/cognito|sign-in/i);
+  });
+  it('links every technology card to its own page', async () => {
+    const fixture = await createApp();
+    const links: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('section.card-grid a.card-link'));
+    expect(links[0].getAttribute('href')).toBe('/technologies/angular');
+    expect(links[0].querySelector('mat-card mat-card-title')?.textContent?.trim()).toBe('Angular');
+    expect(links[0].querySelector('.card-more')?.textContent).toContain("What's new in Angular 22.2");
+  });
+
+  it('opens a technology page from its card and comes back to the same tab', async () => {
+    const fixture = await createApp();
+    const tabs: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="tab"]'));
+    tabs[1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const spring: HTMLAnchorElement = fixture.nativeElement.querySelector('section.card-grid[aria-label="Back-end technologies"] a[href="/technologies/spring-boot"]');
+    spring.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('Spring Boot'));
+    const page: HTMLElement = fixture.nativeElement.querySelector('main article.technology-page');
+    expect(page.querySelector('.release-facts')?.textContent).toContain('Spring Boot 4.1');
+    expect(page.querySelector('.release-facts')?.textContent).toContain('This site runs');
+    expect(page.querySelectorAll('.highlights li').length).toBeGreaterThanOrEqual(4);
+    const source = page.querySelector<HTMLAnchorElement>('.source a')!;
+    expect(source.href).toMatch(/^https:\/\//);
+    expect(source.target).toBe('_blank');
+    expect(document.title).toBe('Spring Boot - Adam Combs - Full Stack Developer');
+
+    fixture.nativeElement.querySelector('a.back-link').click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('Welcome!'));
+    expect(fixture.nativeElement.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.trim()).toBe('Back-end');
+  });
+
+  it('returns to the dashboard on the chosen tab from the side menu of a technology page', async () => {
+    const fixture = await createApp('/technologies/aws-lambda');
+    await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('AWS Lambda'));
+    const navItems: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link)'));
+    // The page's own group is the current one in the menu.
+    expect(navItems[2].getAttribute('aria-current')).toBe('page');
+    navItems[3].click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.nativeElement.querySelector('[role="tab"][aria-selected="true"]')?.textContent?.trim()).toBe('Tools'));
+    expect(TestBed.inject(Router).url).toBe('/');
+  });
+
+  it('explains when there is no page for a technology', async () => {
+    const fixture = await createApp('/technologies/cobol');
+    await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('Technology not found'));
+    expect(fixture.nativeElement.querySelector('main .not-found')?.textContent).toContain('"cobol"');
+    expect(fixture.nativeElement.querySelector('main a.back-link')?.getAttribute('href')).toBe('/');
   });
 });

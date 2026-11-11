@@ -1,0 +1,34 @@
+<h1 class="welcome-title">Welcome!</h1>
+<mat-tab-group class="technology-tabs" mat-stretch-tabs="false" dynamicHeight aria-label="Technologies"
+  [selectedIndex]="nav.selectedGroup()"
+  (selectedIndexChange)="nav.selectedGroup.set($event)">
+  @for (group of technologyGroups; track group.label) {
+    <mat-tab [label]="group.label">
+      <section class="card-grid" [attr.aria-label]="group.label + ' technologies'">
+        @for (technology of group.technologies; track technology.slug) {
+          <!-- Each card opens what's new in that technology's latest release. -->
+          <a class="card-link" [routerLink]="['/technologies', technology.slug]">
+            <mat-card appearance="outlined" [style.--card-index]="$index">
+              <mat-card-header>
+                @if (technology.logo) {
+                  <img mat-card-avatar class="technology-logo" [src]="technology.logo" alt="" width="48" height="48" loading="lazy" />
+                } @else {
+                  <mat-icon mat-card-avatar class="technology-icon" aria-hidden="true">{{ technology.icon }}</mat-icon>
+                }
+                <mat-card-title>{{ technology.name }}</mat-card-title>
+                <mat-card-subtitle>{{ technology.description }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ technology.usage }}</p>
+              </mat-card-content>
+              <mat-card-footer class="card-more">
+                <span>What's new in {{ technology.latest.version }}</span>
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+              </mat-card-footer>
+            </mat-card>
+          </a>
+        }
+      </section>
+    </mat-tab>
+  }
+</mat-tab-group>

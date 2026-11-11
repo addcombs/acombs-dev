@@ -1,0 +1,63 @@
+<a mat-button class="back-link" routerLink="/">
+  <mat-icon>arrow_back</mat-icon>
+  All technologies
+</a>
+@if (found(); as found) {
+  @let technology = found.technology;
+  @let latest = technology.latest;
+  <article class="technology-page" [attr.aria-labelledby]="'technology-' + technology.slug">
+    <header class="page-header">
+      @if (technology.logo) {
+        <img class="page-logo" [src]="technology.logo" alt="" width="72" height="72" />
+      } @else {
+        <mat-icon class="page-icon" aria-hidden="true">{{ technology.icon }}</mat-icon>
+      }
+      <div>
+        <h1 [id]="'technology-' + technology.slug">{{ technology.name }}</h1>
+        <p class="page-description">{{ technology.description }}</p>
+      </div>
+    </header>
+
+    <dl class="release-facts">
+      <div>
+        <dt>Latest</dt>
+        <dd>{{ latest.version }}</dd>
+      </div>
+      <div>
+        <dt>Released</dt>
+        <dd>{{ latest.released }}</dd>
+      </div>
+      @if (latest.usedHere) {
+        <div>
+          <dt>This site runs</dt>
+          <dd>{{ latest.usedHere }}</dd>
+        </div>
+      }
+    </dl>
+
+    <p class="summary">{{ latest.summary }}</p>
+
+    <h2>What's great about it</h2>
+    <ul class="highlights">
+      @for (highlight of latest.highlights; track highlight.title) {
+        <li>
+          <h3>{{ highlight.title }}</h3>
+          <p>{{ highlight.detail }}</p>
+        </li>
+      }
+    </ul>
+
+    <h2>How this site uses it</h2>
+    <p>{{ technology.usage }}</p>
+
+    <p class="source">
+      Checked against the official notes on {{ checkedOn }}:
+      <a [href]="latest.source.url" target="_blank" rel="noopener">{{ latest.source.label }}<span class="cdk-visually-hidden"> (opens in a new tab)</span></a>
+    </p>
+  </article>
+} @else {
+  <section class="not-found">
+    <h1>Technology not found</h1>
+    <p>There's no page for "{{ slug() }}". Pick a technology from the dashboard instead.</p>
+  </section>
+}

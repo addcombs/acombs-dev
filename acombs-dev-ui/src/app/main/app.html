@@ -20,7 +20,7 @@
         <a
           mat-list-item
           href="#"
-          [activated]="selectedTechnologyGroup() === i"
+          [activated]="nav.selectedGroup() === i"
           (click)="$event.preventDefault(); showTechnologyGroup(i)"
         >
           <mat-icon matListItemIcon>{{ group.icon }}</mat-icon>
@@ -105,33 +105,8 @@
     </mat-toolbar>
 
     <main>
-      <h1 class="welcome-title">Welcome!</h1>
-      <mat-tab-group class="technology-tabs" mat-stretch-tabs="false" dynamicHeight aria-label="Technologies"
-        [selectedIndex]="selectedTechnologyGroup()"
-        (selectedIndexChange)="selectedTechnologyGroup.set($event)">
-        @for (group of technologyGroups; track group.label) {
-          <mat-tab [label]="group.label">
-            <section class="card-grid" [attr.aria-label]="group.label + ' technologies'">
-              @for (technology of group.technologies; track technology.name) {
-                <mat-card appearance="outlined" [style.--card-index]="$index">
-                  <mat-card-header>
-                    @if (technology.logo) {
-                      <img mat-card-avatar class="technology-logo" [src]="technology.logo" alt="" width="48" height="48" loading="lazy" />
-                    } @else {
-                      <mat-icon mat-card-avatar class="technology-icon" aria-hidden="true">{{ technology.icon }}</mat-icon>
-                    }
-                    <mat-card-title>{{ technology.name }}</mat-card-title>
-                    <mat-card-subtitle>{{ technology.description }}</mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <p>{{ technology.usage }}</p>
-                  </mat-card-content>
-                </mat-card>
-              }
-            </section>
-          </mat-tab>
-        }
-      </mat-tab-group>
+      <!-- The dashboard, or a technology's page. -->
+      <router-outlet />
     </main>
     <footer class="app-footer">
       <app-toolbar-background />
