@@ -20,7 +20,7 @@ import { AboutDialogComponent } from './about/about-dialog';
 import { ToolbarBackgroundComponent } from '../theme/toolbar-background';
 
 /** A dashboard card: shows `logo` (a local SVG in public/logos) or, when no licensed logo is bundled, a Material `icon`. */
-export interface Technology {
+interface Technology {
   name: string;
   logo?: string;
   icon?: string;
@@ -28,7 +28,7 @@ export interface Technology {
   usage: string;
 }
 
-export interface TechnologyGroup {
+interface TechnologyGroup {
   label: string;
   icon: string;
   technologies: Technology[];

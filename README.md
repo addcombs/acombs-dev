@@ -7,7 +7,7 @@ added. See each folder's README for details.
 
 `project.json` holds the only per-app settings: name, AWS profile and region, domain and theme
 colors. The PowerShell scripts in `scripts\` derive every AWS resource name from it. Their logs go
-to `logs\` and the IDs AWS assigns to `state\` (both git-ignored).
+to `logs\` (git-ignored).
 
 The domain's DNS is hosted in Route 53. The site and API use alias A/AAAA records to their
 CloudFront distributions, since the root domain cannot have a CNAME.

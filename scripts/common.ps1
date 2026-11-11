@@ -3,15 +3,13 @@
 # Loads ..\project.json (the only per-app settings) and derives every AWS resource name from the app
 # name, so a new app needs only its own project.json. Folders under the project root:
 #   logs\    run logs and generated request files (git-ignored)
-#   state\   IDs AWS assigned (git-ignored)
 # Native tools write normal output to stderr; Windows PowerShell 5 would treat that as a terminating
 # error under 'Stop', so failures are checked via exit codes.
 param([string]$LogName, [string]$Title, [switch]$AppendLog)
 $ErrorActionPreference = 'Continue'
 $root   = Split-Path -Parent $PSScriptRoot
 $logs   = Join-Path $root 'logs'
-$state  = Join-Path $root 'state'
-New-Item -ItemType Directory -Force $logs, $state | Out-Null
+New-Item -ItemType Directory -Force $logs | Out-Null
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
 $project     = Get-Content (Join-Path $root 'project.json') -Raw | ConvertFrom-Json
