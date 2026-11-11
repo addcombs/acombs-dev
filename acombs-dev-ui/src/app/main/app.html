@@ -48,6 +48,14 @@
       >
         <mat-icon>menu</mat-icon>
       </button>
+      <!-- logos/logo.svg, drawn here in the theme's primary colour so it follows light and dark mode. -->
+      <svg class="app-logo" viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M51.1 12.9A27 27 0 1 0 51.1 51.1" stroke-width="7" />
+          <path d="M22.5 44L32 20.5L41.5 44" stroke-width="5.5" />
+          <path d="M26.5 35.5H37.5" stroke-width="4.5" />
+        </g>
+      </svg>
       <span class="app-title">{{ appName }}</span>
       <span class="spacer"></span>
       <div class="brightness-control" [hidden]="!brightnessOpen()">

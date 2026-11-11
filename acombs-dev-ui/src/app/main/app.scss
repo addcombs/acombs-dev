@@ -56,6 +56,14 @@ mat-sidenav mat-divider {
   font: inherit;
 }
 
+// Decorative, as the title beside it says the same.
+.app-logo {
+  display: block;
+  flex-shrink: 0;
+  height: 48px;
+  margin-left: 4px;
+}
+
 .app-title {
   margin-left: 8px;
   font-size: 1.25rem;

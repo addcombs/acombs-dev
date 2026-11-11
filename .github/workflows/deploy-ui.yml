@@ -50,18 +50,22 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Hashed assets can be cached for a year; index.html must always be re-checked.
+      # Hashed assets can be cached for a year; index.html must always be re-checked. The files from
+      # public/ (logos/ and favicon.ico) keep their names when they change, so they are cached for an
+      # hour and CloudFront's copies are dropped on each deploy.
       - name: Upload to S3
         run: |
-          aws s3 sync dist/acombs-dev/browser "s3://$BUCKET" --delete --exclude index.html \
-            --cache-control public,max-age=31536000,immutable --only-show-errors
+          aws s3 sync dist/acombs-dev/browser "s3://$BUCKET" --delete --exclude index.html --exclude 'logos/*' \
+            --exclude favicon.ico --cache-control public,max-age=31536000,immutable --only-show-errors
+          aws s3 sync dist/acombs-dev/browser "s3://$BUCKET" --delete --exclude '*' --include 'logos/*' \
+            --include favicon.ico --cache-control public,max-age=3600 --only-show-errors
           aws s3 cp dist/acombs-dev/browser/index.html "s3://$BUCKET/index.html" \
             --cache-control no-cache --content-type text/html --only-show-errors
 
       - name: Refresh CloudFront
         run: |
           id=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" \
-            --paths /index.html / --query Invalidation.Id --output text)
+            --paths /index.html / '/logos/*' /favicon.ico --query Invalidation.Id --output text)
           aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION" --id "$id"
 
       - name: Check the live site
