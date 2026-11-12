@@ -9,18 +9,17 @@ describe('TECHNOLOGY_GROUPS', () => {
     slugs.forEach((slug) => expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/));
   });
 
-  it('describes the latest release of every technology, with an official source', () => {
-    for (const { name, latest } of technologies) {
-      expect(latest.version, name).not.toBe('');
-      expect(latest.released, name).not.toBe('');
-      expect(latest.summary.length, name).toBeGreaterThan(60);
-      expect(latest.highlights.length, name).toBeGreaterThanOrEqual(4);
-      latest.highlights.forEach((highlight) => {
+  it('describes every technology and the version used, with an official link', () => {
+    for (const { name, version, summary, highlights, learnMore } of technologies) {
+      expect(version, name).not.toBe('');
+      expect(summary.length, name).toBeGreaterThan(60);
+      expect(highlights.length, name).toBeGreaterThanOrEqual(4);
+      highlights.forEach((highlight) => {
         expect(highlight.title, name).not.toBe('');
         expect(highlight.detail.length, name).toBeGreaterThan(40);
       });
-      expect(new Set(latest.highlights.map((highlight) => highlight.title)).size, name).toBe(latest.highlights.length);
-      expect(latest.source.url, name).toMatch(/^https:\/\//);
+      expect(new Set(highlights.map((highlight) => highlight.title)).size, name).toBe(highlights.length);
+      expect(learnMore.url, name).toMatch(/^https:\/\//);
     }
   });
 

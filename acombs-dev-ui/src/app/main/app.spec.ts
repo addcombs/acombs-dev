@@ -276,7 +276,7 @@ describe('App', () => {
     const links: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('section.card-grid a.card-link'));
     expect(links[0].getAttribute('href')).toBe('/technologies/angular');
     expect(links[0].querySelector('mat-card mat-card-title')?.textContent?.trim()).toBe('Angular');
-    expect(links[0].querySelector('.card-more')?.textContent).toContain("What's new in Angular 22.2");
+    expect(links[0].querySelector('.card-more')?.textContent).toContain('Angular 21.2');
   });
 
   it('opens a technology page from its card and comes back to the same tab', async () => {
@@ -291,10 +291,10 @@ describe('App', () => {
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('Spring Boot'));
     const page: HTMLElement = fixture.nativeElement.querySelector('main article.technology-page');
-    expect(page.querySelector('.release-facts')?.textContent).toContain('Spring Boot 4.1');
-    expect(page.querySelector('.release-facts')?.textContent).toContain('This site runs');
+    expect(page.querySelector('.version-used')?.textContent).toContain('Version used');
+    expect(page.querySelector('.version-used dd')?.textContent?.trim()).toBe('Spring Boot 3.5');
     expect(page.querySelectorAll('.highlights li').length).toBeGreaterThanOrEqual(4);
-    const source = page.querySelector<HTMLAnchorElement>('.source a')!;
+    const source = page.querySelector<HTMLAnchorElement>('.learn-more a')!;
     expect(source.href).toMatch(/^https:\/\//);
     expect(source.target).toBe('_blank');
     expect(document.title).toBe('Spring Boot - Adam Combs - Full Stack Developer');

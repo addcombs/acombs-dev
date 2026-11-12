@@ -41,28 +41,23 @@ h1 {
   color: var(--mat-sys-on-surface-variant);
 }
 
-// Latest version, release date and the version this site runs, side by side.
-.release-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+// The version this site uses, as a single labelled fact.
+.version-used {
+  display: inline-block;
   margin: 24px 0;
-}
-
-.release-facts > div {
   padding: 12px 16px;
   border: 1px solid var(--mat-sys-primary);
   border-radius: 12px;
 }
 
-.release-facts dt {
+.version-used dt {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--mat-sys-primary);
 }
 
-.release-facts dd {
+.version-used dd {
   margin: 4px 0 0;
   font-weight: 700;
 }
@@ -105,13 +100,13 @@ p {
   line-height: 1.5;
 }
 
-.source {
+.learn-more {
   margin-top: 32px;
   font-size: 0.875rem;
   color: var(--mat-sys-on-surface-variant);
 }
 
-.source a {
+.learn-more a {
   color: var(--mat-sys-primary);
 }
 

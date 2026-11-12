@@ -6,7 +6,7 @@
     <mat-tab [label]="group.label">
       <section class="card-grid" [attr.aria-label]="group.label + ' technologies'">
         @for (technology of group.technologies; track technology.slug) {
-          <!-- Each card opens what's new in that technology's latest release. -->
+          <!-- Each card opens a page on what the technology does. -->
           <a class="card-link" [routerLink]="['/technologies', technology.slug]">
             <mat-card appearance="outlined" [style.--card-index]="$index">
               <mat-card-header>
@@ -22,7 +22,7 @@
                 <p>{{ technology.usage }}</p>
               </mat-card-content>
               <mat-card-footer class="card-more">
-                <span>What's new in {{ technology.latest.version }}</span>
+                <span>{{ technology.version }}</span>
                 <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </mat-card-footer>
             </mat-card>
