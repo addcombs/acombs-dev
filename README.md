@@ -10,19 +10,19 @@ colors. The PowerShell scripts in `scripts\` derive every AWS resource name from
 to `logs\` (git-ignored).
 
 The domain's DNS is hosted in Route 53. The site and API use alias A/AAAA records to their
-CloudFront distributions, since the root domain cannot have a CNAME.
+CloudFront distributions, since the root domain cannot have a CNAME; the scripts write these and the
+certificate validation records themselves.
 
 ## Set up
 
 1. `scripts\start-all.ps1` - theme palettes, build, tests, and the app at http://localhost:4200/
 2. `scripts\deploy-api.ps1` (builds, tests and creates the function), then
    `scripts\create-function-url.ps1` - the API on Lambda
-3. `scripts\request-certificate.ps1` - add the validation CNAMEs it prints to the Route 53 zone and
-   re-run it until both certificates are issued
+3. `scripts\request-certificate.ps1` - the certificates, with their validation CNAMEs written to
+   the Route 53 zone; it waits until both are issued
 4. `scripts\create-ui-bucket.ps1`, `scripts\create-cloudfront.ps1`, `scripts\create-api-cloudfront.ps1`
-5. In Route 53: alias A and AAAA records for the host and `api.` host to the CloudFront domains the
-   scripts print
-6. Run the Deploy UI workflow from the repository's Actions tab (Run workflow) for the UI's first deploy
+   - the distributions, with alias A/AAAA records for the host and `api.` host in Route 53
+5. Run the Deploy UI workflow from the repository's Actions tab (Run workflow) for the UI's first deploy
 
 ## Deploying
 
