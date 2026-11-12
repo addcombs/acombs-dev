@@ -1,4 +1,11 @@
 <h1 class="welcome-title">Welcome!</h1>
+<p class="site-intro">
+  acombs-dev.com is my personal development site and a working example of a full-stack web app: an Angular
+  and Angular Material front end, backed by a Java Spring Boot API that runs on AWS Lambda, served worldwide
+  through Amazon CloudFront and deployed automatically from GitHub. The cards below cover every technology
+  behind it, grouped into front-end, back-end, cloud and tools. Open any card to see what the technology does,
+  the version this site uses, and how it fits in.
+</p>
 <mat-tab-group class="technology-tabs" mat-stretch-tabs="false" dynamicHeight aria-label="Technologies"
   [selectedIndex]="nav.selectedGroup()"
   (selectedIndexChange)="nav.selectedGroup.set($event)">
