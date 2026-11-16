@@ -32,6 +32,7 @@ export class App {
   protected readonly developerName = DEVELOPER_NAME;
   protected readonly apiDocsUrl = apiUrl('/swagger-ui.html');
   protected readonly cardsUrl = 'https://cards.acombs-dev.com/';
+  protected readonly interviewPrepUrl = 'https://interview-prep.acombs-dev.com/';
   protected readonly theme = inject(ThemeService);
   protected readonly apiStatus = inject(ApiStatusService).status;
   protected readonly apiStatusLabel = computed(() => {

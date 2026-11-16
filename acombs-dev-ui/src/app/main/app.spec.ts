@@ -158,7 +158,7 @@ describe('App', () => {
   it('selects technology tabs from the side menu', async () => {
     const fixture = await createApp();
     await fixture.whenStable();
-    const navItems: HTMLElement[] = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link)'));
+    const navItems: HTMLElement[] = Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link, .interview-prep-link)'));
     expect(navItems.map((item) => item.querySelector('[matListItemTitle]')?.textContent?.trim()))    .toEqual(['Front-end', 'Back-end', 'Cloud', 'Tools']);
     navItems[2].click();
     fixture.detectChanges();
@@ -170,15 +170,19 @@ describe('App', () => {
     expect(fixture.nativeElement.querySelector('section.card-grid[aria-label="Cloud technologies"]')).not.toBeNull();
   });
 
-  it('links to the Cards site last in the side menu', async () => {
+  it('links to the Cards and Interview Prep sites last in the side menu', async () => {
     const fixture = await createApp();
     const items: HTMLAnchorElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]'));
-    const cards = items[items.length - 1];
+    const [cards, interviewPrep] = items.slice(-2);
     expect(cards.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe('Cards');
     expect(cards.getAttribute('href')).toBe('https://cards.acombs-dev.com/');
     expect(cards.previousElementSibling?.tagName).toBe('MAT-DIVIDER');
     // Its icon shows all four sports, two by two.
     expect(cards.querySelectorAll('svg.cards-icon[matListItemIcon] path').length).toBe(4);
+    expect(interviewPrep.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe('Interview Prep');
+    expect(interviewPrep.getAttribute('href')).toBe('https://interview-prep.acombs-dev.com/');
+    // The book of the Interview Prep logo.
+    expect(interviewPrep.querySelector('mat-icon[matListItemIcon]')?.textContent?.trim()).toBe('menu_book');
   });
 
   it('toggles the sidenav from the hamburger button', async () => {
@@ -309,7 +313,7 @@ describe('App', () => {
   it('returns to the dashboard on the chosen tab from the side menu of a technology page', async () => {
     const fixture = await createApp('/technologies/aws-lambda');
     await vi.waitFor(() => expect(fixture.nativeElement.querySelector('main h1')?.textContent?.trim()).toBe('AWS Lambda'));
-    const navItems: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link)'));
+    const navItems: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list a[mat-list-item]:not(.cards-link, .interview-prep-link)'));
     // The page's own group is the current one in the menu.
     expect(navItems[2].getAttribute('aria-current')).toBe('page');
     navItems[3].click();
