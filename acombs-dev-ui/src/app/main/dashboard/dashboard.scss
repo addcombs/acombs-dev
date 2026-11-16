@@ -45,6 +45,16 @@
   transition: box-shadow 200ms, transform 200ms;
   animation: card-enter 1300ms cubic-bezier(0.2, 0, 0, 1) both;
   animation-delay: calc(var(--card-index, 0) * 200ms);
+  // The header's band follows the card's rounded corners.
+  overflow: clip;
+}
+
+// A coloured band behind the logo, name and description, running edge to edge.
+.card-grid mat-card-header {
+  padding: 16px;
+  background-color: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  --mat-card-subtitle-text-color: var(--mat-sys-on-secondary-container);
 }
 
 .card-link:hover mat-card,
@@ -67,17 +77,25 @@
   }
 }
 
-.technology-logo {
+// Logos and icons sit on a round chip in the page colour, so logos in the theme's own hue stay
+// visible on the header band.
+.technology-logo,
+.technology-icon {
+  box-sizing: border-box;
   width: 48px;
   height: 48px;
-  border-radius: 0;
+  border-radius: 50%;
+  background-color: var(--mat-sys-surface);
+}
+
+.technology-logo {
+  padding: 8px;
   object-fit: contain;
 }
 
 .technology-icon {
-  width: 48px;
-  height: 48px;
-  font-size: 44px;
+  padding: 8px;
+  font-size: 32px;
   color: var(--mat-sys-primary);
 }
 
