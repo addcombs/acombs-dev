@@ -13,7 +13,6 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { ThemeService } from '../theme/theme.service';
 import { ApiStatusService } from './api-status/api-status.service';
-import { apiUrl } from '../api-url';
 import { APP_DISPLAY_NAME, DEVELOPER_NAME } from './app-name';
 import { AboutDialogComponent } from './about/about-dialog';
 import { ToolbarBackgroundComponent } from '../theme/toolbar-background';
@@ -30,7 +29,7 @@ import { TechnologyNavService } from '../technologies/technology-nav.service';
 export class App {
   protected readonly appName = APP_DISPLAY_NAME;
   protected readonly developerName = DEVELOPER_NAME;
-  protected readonly apiDocsUrl = apiUrl('/swagger-ui.html');
+  protected readonly apiDocsUrl = '/swagger-ui.html';
   protected readonly cardsUrl = 'https://cards.acombs-dev.com/';
   protected readonly interviewPrepUrl = 'https://interview-prep.acombs-dev.com/';
   protected readonly theme = inject(ThemeService);

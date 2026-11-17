@@ -16,7 +16,7 @@ untracked `.env` file in this directory):
 
 | Variable | Purpose |
 |---|---|
-| `CORS_ALLOWED_ORIGINS` | Comma-separated browser origins allowed to call the health endpoint cross-origin, e.g. `https://acombs-dev.com`. Unset allows none. `deploy-api` sets it to the UI's domain. |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated browser origins allowed to call the health endpoint cross-origin, e.g. `https://acombs-dev.com`. Unset allows none. The stack (`..\infra`) sets it to the site's domain. |
 
 ## Build and run
 
@@ -35,8 +35,8 @@ mvn spring-boot:run                              # run on http://localhost:8080
 
 With the API running locally, open Swagger UI at `http://localhost:8080/swagger-ui.html` or
 retrieve the generated OpenAPI JSON at `http://localhost:8080/v3/api-docs`. They document endpoints
-under `/api` only, so they list nothing until some are added. When deployed they are served at the
-API's own host, e.g. `https://api.acombs-dev.com/swagger-ui.html`.
+under `/api` only, so they list nothing until some are added. When deployed the site's CloudFront
+distribution sends them to the API, e.g. `https://acombs-dev.com/swagger-ui.html`.
 
 The CORS rule above covers the health endpoint only. An endpoint added under `/api` that the
 deployed UI calls needs its own CORS mapping (e.g. a `WebMvcConfigurer`), since the UI and API are

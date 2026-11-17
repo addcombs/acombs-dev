@@ -317,7 +317,7 @@ export const TECHNOLOGY_GROUPS: TechnologyGroup[] = [
       },
       {
         slug: 'amazon-cloudfront', name: 'Amazon CloudFront', icon: 'public', description: 'Content delivery and HTTPS',
-        usage: 'Serves the UI at the app domain and the API at its api subdomain over HTTPS, caching the UI files and passing API requests straight to Lambda.',
+        usage: 'Serves the UI and the API from one distribution at the app domain over HTTPS, caching the UI files and passing the API paths straight to Lambda.',
         version: AWS_MANAGED,
         summary: 'Amazon CloudFront is AWS\'s content delivery network, serving websites and APIs from hundreds of locations close to visitors.',
         highlights: [
@@ -343,7 +343,7 @@ export const TECHNOLOGY_GROUPS: TechnologyGroup[] = [
       },
       {
         slug: 'aws-certificate-manager', name: 'AWS Certificate Manager', icon: 'verified_user', description: 'Free TLS certificates',
-        usage: 'Issues and auto-renews the certificates for the app and API domains, validated through DNS records in Route 53.',
+        usage: 'Issues and auto-renews one certificate for the root domain and its subdomains, shared by every app and validated through DNS records in Route 53.',
         version: AWS_MANAGED,
         summary: 'AWS Certificate Manager issues and manages the TLS certificates that let websites and APIs use HTTPS.',
         highlights: [
@@ -356,7 +356,7 @@ export const TECHNOLOGY_GROUPS: TechnologyGroup[] = [
       },
       {
         slug: 'amazon-route-53', name: 'Amazon Route 53', icon: 'alt_route', description: 'DNS hosting',
-        usage: 'Hosts the domain\'s DNS records, with alias records that point the root domain and its api subdomain at CloudFront, which a CNAME cannot do at the root.',
+        usage: 'Hosts the domain\'s DNS records, with alias records that point the root domain at CloudFront, which a CNAME cannot do at the root.',
         version: AWS_MANAGED,
         summary: 'Amazon Route 53 is AWS\'s highly available DNS service, translating domain names like acombs-dev.com into the addresses that serve them.',
         highlights: [
@@ -401,7 +401,7 @@ export const TECHNOLOGY_GROUPS: TechnologyGroup[] = [
       },
       {
         slug: 'powershell-scripts', name: 'PowerShell scripts', icon: 'terminal', description: 'Setup, tests, and start-up',
-        usage: 'scripts/start-all.ps1 installs dependencies, builds and tests both apps, then starts the API and UI; the create-* and deploy-api scripts set up AWS from project.json, and GitHub Actions deploys each push to main.',
+        usage: 'scripts/start-all.ps1 installs dependencies, builds and tests both apps, then starts the API and UI; scripts/provision.ps1 sets up AWS from project.json through the CDK stack in infra/, and GitHub Actions deploys each push to main.',
         version: 'Windows PowerShell 5.1 locally, PowerShell 7 in GitHub Actions',
         summary: 'PowerShell is Microsoft\'s cross-platform shell and scripting language, built on .NET, for automating tasks on Windows, Linux and macOS.',
         highlights: [
@@ -414,7 +414,7 @@ export const TECHNOLOGY_GROUPS: TechnologyGroup[] = [
       },
       {
         slug: 'aws-cli', name: 'AWS CLI', icon: 'keyboard', description: 'Command-line access to AWS',
-        usage: 'Runs every AWS step in the setup and deploy scripts, from requesting certificates to uploading the UI and publishing new Lambda versions.',
+        usage: 'Runs the AWS steps in the setup and deploy scripts, from requesting the certificate and deploying the CDK stack to uploading the UI and publishing new Lambda versions.',
         version: 'AWS CLI 2.38',
         summary: 'The AWS Command Line Interface controls every AWS service from a terminal or script.',
         highlights: [
