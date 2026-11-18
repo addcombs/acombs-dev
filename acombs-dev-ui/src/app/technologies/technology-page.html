@@ -7,7 +7,7 @@
   <article class="technology-page" [attr.aria-labelledby]="'technology-' + technology.slug">
     <header class="page-header">
       @if (technology.logo) {
-        <img class="page-logo" [src]="technology.logo" alt="" width="72" height="72" />
+        <img class="page-logo" [ngSrc]="technology.logo" alt="" width="72" height="72" />
       } @else {
         <mat-icon class="page-icon" aria-hidden="true">{{ technology.icon }}</mat-icon>
       }

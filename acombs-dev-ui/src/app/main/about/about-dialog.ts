@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { APP_NAME } from '../app-name';
@@ -18,7 +18,6 @@ import { APP_NAME } from '../app-name';
       <button mat-button type="button" mat-dialog-close>Close</button>
     </mat-dialog-actions>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutDialogComponent {
   protected readonly appName = APP_NAME;

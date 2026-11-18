@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Title } from '@angular/platform-browser';
@@ -10,10 +11,9 @@ import { TechnologyNavService } from './technology-nav.service';
 /** What one technology does and the version this site uses, opened from its dashboard card. */
 @Component({
   selector: 'app-technology-page',
-  imports: [MatButtonModule, MatIconModule, RouterLink],
+  imports: [NgOptimizedImage, MatButtonModule, MatIconModule, RouterLink],
   templateUrl: './technology-page.html',
   styleUrl: './technology-page.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TechnologyPageComponent {
   /** From the route's :slug, through component input binding. */

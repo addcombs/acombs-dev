@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,7 +24,6 @@ import { TechnologyNavService } from '../technologies/technology-nav.service';
   imports: [MatButtonModule, MatIconModule, MatListModule, MatMenuModule, MatSidenavModule, MatToolbarModule, MatTooltipModule, RouterOutlet, ToolbarBackgroundComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.scss', './brightness-control.scss', './toolbar.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected readonly appName = APP_DISPLAY_NAME;

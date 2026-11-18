@@ -18,7 +18,7 @@
             <mat-card appearance="outlined" [style.--card-index]="$index">
               <mat-card-header>
                 @if (technology.logo) {
-                  <img mat-card-avatar class="technology-logo" [src]="technology.logo" alt="" width="48" height="48" loading="lazy" />
+                  <img mat-card-avatar class="technology-logo" [ngSrc]="technology.logo" alt="" width="48" height="48" />
                 } @else {
                   <mat-icon mat-card-avatar class="technology-icon" aria-hidden="true">{{ technology.icon }}</mat-icon>
                 }
