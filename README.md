@@ -8,9 +8,7 @@ details.
 
 `project.json` holds the only per-app settings: name, display name, AWS profile and region, domain
 and theme colors. `"accounts": false` makes it a site without sign-in, so it has no user pool,
-database login or migrations. `template.keep` lists the files this site keeps as its own when it is
-brought up to date with `template-0` (its API and UI build files, without the sign-in libraries, and
-its router setup).
+database login or migrations.
 
 `infra\` is a CDK app (TypeScript) with every AWS resource the site runs on: the UI and deploy
 buckets, the API's function, `live` alias and function URL, the distribution and its Route 53 alias
@@ -26,8 +24,7 @@ again.
 
 ## Set up
 
-The site was created from `template-0`; bring it up to date with the template's
-`scripts\sync-from-template.ps1 -Target ..\acombs-dev`.
+The site was created from `template-0` and is independent of it.
 
 1. `scripts\provision.ps1` - the GitHub repository's deploy role, the stack, the UI's settings and
    the first deploy

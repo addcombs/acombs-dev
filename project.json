@@ -5,18 +5,5 @@
   "aws": { "profile": "default", "region": "us-east-2" },
   "domain": { "apex": "acombs-dev.com", "host": "acombs-dev.com" },
   "accounts": false,
-  "theme": { "primary": "#3F51B5" },
-  "template": {
-    "keep": [
-      "acombs-dev-api/pom.xml",
-      "acombs-dev-api/src/main/java/com/acombsdev/acombsdev/ApiApplication.java",
-      "acombs-dev-api/src/main/resources/application.properties",
-      "acombs-dev-ui/package.json",
-      "acombs-dev-ui/package-lock.json",
-      "acombs-dev-ui/proxy.conf.json",
-      "acombs-dev-ui/src/app/app.config.ts",
-      "acombs-dev-ui/src/app/main/app-name.spec.ts",
-      "acombs-dev-ui/src/index.html"
-    ]
-  }
+  "theme": { "primary": "#3F51B5" }
 }
